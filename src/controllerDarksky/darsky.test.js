@@ -9,7 +9,6 @@ chai.use(chaiThings);
 
 const expect = chai.expect;
 const assert = chai.assert;
-const should = chai.should;
 
 describe('Darsky Controller', () => {
   beforeEach(() => {
@@ -20,11 +19,12 @@ describe('Darsky Controller', () => {
     nock.cleanAll()
   });
 
-  it('Tiene definido la llave', () => {
+  it('Tiene definido la APIKEY', () => {
     darsky.isDefinedApiKey();
   });
 
-  it('En caso de error al solicitar, enviar mensaje.',  (done) => {
+  it('En caso de error al solicitar ' +
+    'tiempo sobre una ciudad, enviar mensaje.',  (done) => {
     nock('https://api.darksky.net')
       .get(uri => uri.includes(','))
       .replyWithError('error');
@@ -38,6 +38,19 @@ describe('Darsky Controller', () => {
         assert.equal(error.message, 'error');
         done();
       });
+  });
+
+  it('Enviar error cuando no se envia objeto ciudad', () => {
+    expect(darsky.getDataCity).to.throw('undefined');
+  });
+
+  it('Enviar error falta una propiedad en el objeto ciudad', () => {
+    const city = {
+      name: 'Santiago (CL)',
+      latitude : -33.435974,
+      // longitude: -70.67286
+    };
+    expect(() => darsky.getDataCity(city)).to.throw('properties');
   });
 
   it('Debe devolver un objeto con latitude, longitude, y time ', (done) => {
@@ -61,7 +74,7 @@ describe('Darsky Controller', () => {
     };
 
     darsky.getDataCity(city).then((response) => {
-      expect(response).to.be.an('object').that.to.have.keys('latitude', 'longitude', 'time');
+      expect(response).to.be.an('object').that.to.have.keys('latitude', 'longitude', 'time', 'name');
       done();
     });
   });
@@ -80,7 +93,7 @@ describe('Darsky Controller', () => {
       .reply(200, obj);
 
     darsky.getTimeCities().then((response) => {
-      expect(response).to.be.a('array').that.to.have.all.keys('latitude', 'longitude', 'time');
+      expect(response).to.be.a('array').that.to.have.all.keys('latitude', 'longitude', 'time', 'name');
       done()
     });
   });
