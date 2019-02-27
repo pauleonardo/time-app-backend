@@ -26,10 +26,13 @@ async function start(cbSendData){
   try{
     const server = await init();
     if(typeof server !== 'Error'){
-      server.on('connection', (socket) => {
-        socket.emit('time', cbSendData());
-        socket.on('requestTime', () => {
-          socket.emit('time', cbSendData())
+      server.on('connection', async (socket) => {
+        const data = await cbSendData();
+
+        socket.emit('time', data );
+        socket.on('requestTime', async () => {
+            const data = await cbSendData();
+            socket.emit('time', data );
         });
       })
     }

@@ -46,9 +46,7 @@ describe('Websocket Controller', () => {
   it('Verificar que Listeners corresponden con la misma data', (done) => {
 
     const saludo = 'hola cliente';
-    const cb = () => {
-      return saludo;
-    };
+    const cb = () => Promise.resolve(saludo);
     socketClient.on('time', (data) => {
       expect(data).to.equal(saludo);
       websocketController.close();
@@ -59,10 +57,10 @@ describe('Websocket Controller', () => {
 
   it('En caso que el cliente solicite la hora, se le devuelva un dato', (done) => {
     let sum = 0;
-    const cb = () => {
+    const cb = () => new Promise( (resolve) => {
       sum++;
-      return sum;
-    };
+      resolve(sum);
+    });
 
     socketClient.on('time', (data) => {
       if(data === 2){

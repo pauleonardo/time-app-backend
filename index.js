@@ -1,24 +1,45 @@
-const express = require('express');
-const bodyParser = require('body-parser');
-const app = express();
-const http = require('http').Server(app);
-const io = require('socket.io')(http);
+const darkskyController = require('./src/DarkskyController/index');
+const websocketController = require('./src/WebsocketController/index');
+const redisController = require('./src/RedisController');
 
-const env = require('./config');
+async function init() {
+  darkskyController.init();
+  redisController.init();
+  let cities = await darkskyController.getTimeCities();
 
-const port = process.env.PORT || env.PORT;
+  async function updateTask() {
+    return new Promise(async (resolve) => {
+      const updated = await Promise.all(cities.map(async (city) => {
+        const result = await redisController.pushTime(city);
+        return result;
+      }));
+      resolve(updated);
+    });
+  }
 
-http.listen(port, function () {
-  console.warn('Servidor Escuchando!', port);
-});
+  async function sendTask(){
+      const result = await Promise.all(cities.map((city) => redisController.getTime(city.name)));
+      return result;
+  }
 
-io.on('connection', function (socket) {
+  function cbSocketP(){
+    return new Promise(async (resolve, reject) => {
+      await updateTask();
+      try{
+        if(Math.random() <= 0.1){
+          throw new Error('How unfortunate! The API Request Failed');
+        }
+        const result = await sendTask();
+        resolve(result);
+      }catch (e) {
+        redisController.setErrorRequest(e.message);
+        reject(new Error(e));
+      }
+    }).catch((err) => console.warn(err.message));
+  }
 
-  socket.emit('time', () => {
+  console.warn('Servidor Escuchando');
+  websocketController.start(cbSocketP);
+}
 
-  });
-
-  socket.on('timeRequest', () => {
-    io.emit('time', '');
-  });
-});
+init();
