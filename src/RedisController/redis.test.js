@@ -29,11 +29,13 @@ describe('Redis Controller', () => {
   it('Enviar OK, al insertar un tiempo', async () => {
     const time =
       {
-        name: 'Santiago (CL)',
+        name: 'Santiago ejemplo',
         latitude : -33.435974,
         longitude: -70.67286,
-        time: 12
-    };
+        time: 12,
+        timezone: 'America/Santiago',
+        temperature: 60,
+      };
     const result = await redisController.pushTime(time);
     expect(result).to.equal('OK');
   });
@@ -61,12 +63,14 @@ describe('Redis Controller', () => {
         name: 'Santiago ejemplo',
         latitude : -33.435974,
         longitude: -70.67286,
-        time: 12
+        time: 12,
+        timezone: 'America/Santiago',
+        temperature: 60,
       };
     await redisController.pushTime(time);
     const city = 'Santiago ejemplo';
     const result = await redisController.getTime(city);
-    expect(result).to.have.keys('time', 'longitude', 'longitude');
+    expect(result).to.have.keys('time', 'longitude', 'longitude', 'name', 'temperature', 'timezone');
   });
 
   it('Intentar obtener un valor no existente, enviar ELEMENT IS NULL', async () => {
@@ -85,9 +89,10 @@ describe('Redis Controller', () => {
     });
   });
 
-  it('Intentar guardar un error diferente de "How unfortunate! The API Request Failed", enviar un error', () => {
+  it('Intentar guardar un error diferente de "How unfortunate! The API Request Failed", enviar un error', async () => {
     const error = 'otro error';
-    expect(() => redisController.setErrorRequest(error)).to.throw('NO ES UN ERROR PERMITIDO');
+    const result = await redisController.setErrorRequest(error);
+    expect(result.message).to.equal('NO ES UN ERROR PERMITIDO');
   });
 });
 

@@ -1,4 +1,5 @@
 let axios = require('axios');
+let moment = require('moment');
 const env = require('../../config');
 
 let instanceAxios, apiKey, toRequest;
@@ -37,10 +38,12 @@ function getDataCity(city) {
   };
   return new Promise(async (resolve, reject) => {
     try {
-      const result = await instanceAxios.get(`/${city.latitude},${city.longitude}`);
-      const { latitude, longitude, currently: { time } } = result.data;
+      const result =
+        await instanceAxios.get(`/${city.latitude},${city.longitude}`);
+      const { latitude, longitude, timezone,
+        currently: { time, temperature  } } = result.data;
       resolve({
-        latitude, longitude, time, name: city.name,
+        latitude, longitude, time, name: city.name, timezone, temperature
       });
     } catch (e) {
       const errorObject = {
@@ -55,14 +58,16 @@ function getDataCity(city) {
  * Obtiene todas la data de las ciudades.
  * @returns {Promise<*>}
  */
-async function getTimeCities() {
-  try{
-    if(!isDefinedApiKey()) throw new Error('ApiKey is not defined');
-    const cities = await Promise.all(toRequest.map(async (city) => await getDataCity(city)));
-    return cities;
-  } catch (e) {
-    return e.message;
-  }
+function getTimeCities() {
+  return new Promise(async (resolve, reject) => {
+    try{
+      if(!isDefinedApiKey()) throw new Error('ApiKey is not defined');
+      const cities = await Promise.all(toRequest.map(async (city) => await getDataCity(city)));
+      resolve(cities)
+    } catch (e) {
+      reject(e);
+    }
+  }).catch((error) => console.warn('Error "getTimeCities": ', error.message));
 }
 
   module.exports = {

@@ -1,4 +1,5 @@
-const moment = require('moment');
+// const moment = require('moment');
+const moment = require('moment-timezone');
 const env = require('../../config');
 
 const redis = (process.env.NODE_ENV === "testing") ? require('redis-mock') : require('redis');
@@ -13,14 +14,18 @@ function init(){
   const REDISPORT = process.env.REDISPORT || env.REDISPORT;
   const REDISHOST = process.env.REDISHOST || env.REDISHOST;
   return new Promise((resolve, reject) => {
-    clientRedis = redis.createClient(REDISPORT, REDISHOST);
+    clientRedis = redis.createClient({
+      // host: REDISHOST,
+      port: REDISPORT,
+    });
     clientRedis.on('connect', function() {
       resolve('OK');
     });
-    clientRedis.on('error', function(){
-      reject('error');
+    clientRedis.on('error', function(err){
+
+      reject(new Error(err.message));
     })
-  });
+  }).catch((err) => console.warn(err));
 }
 
 /**
@@ -38,14 +43,21 @@ function isClientConnected(){
  */
 function pushTime(element) {
     if(!element) throw new TypeError('Error undefined');
-    if(!element.hasOwnProperty('name') || !element.hasOwnProperty('latitude')
-      || !element.hasOwnProperty('time') || !element.hasOwnProperty('longitude')){
+    if(!element.hasOwnProperty('name') ||
+      !element.hasOwnProperty('latitude') ||
+      !element.hasOwnProperty('timezone') ||
+      !element.hasOwnProperty('temperature') ||
+      !element.hasOwnProperty('time') ||
+      !element.hasOwnProperty('longitude')){
       throw new TypeError ('Error properties');
     };
   return new Promise(async (resolve, reject) => {
     try{
-      clientRedis.hmset(element.name, 'latitude',
-        element.latitude, 'longitude', element.longitude, 'time', element.time, function(err, result) {
+      clientRedis.hmset(element.name, 'latitude', element.latitude,
+        'longitude', element.longitude, 'time', element.time,
+        'name', element.name, 'timezone', element.timezone,
+        'temperature', element.temperature,
+        function(err, result) {
           if(err)  reject(err);
           resolve(result);
         });
@@ -86,17 +98,17 @@ function getTime(cityName){
  * @returns {Promise<any>}
  */
 function setErrorRequest(error) {
-  if(!error || !error.length > 0 || error !== 'How unfortunate! The API Request Failed'){
-    throw new Error('NO ES UN ERROR PERMITIDO');
-  }
   const timestamp = moment().unix();
   return new Promise((resolve, reject) => {
+    if(!error || !error.length > 0 || error !== 'How unfortunate! The API Request Failed'){
+      throw new Error('NO ES UN ERROR PERMITIDO');
+    }
     clientRedis.hset('api.errors', timestamp, error, function(err, result) {
       if(err) reject(err);
       if(result === null) reject(new Error('RESULTADO ES NULL'));
       resolve('OK');
     });
-  });
+  }).catch((error) => { console.warn(error.message); return error});
 }
 
 module.exports = {

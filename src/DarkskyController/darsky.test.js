@@ -58,8 +58,10 @@ describe('Darsky Controller', () => {
     const obj =  {
       latitude: -33.435974,
       longitude: -70.67286,
+      timezone: 'America/Santiago',
       currently: {
         time: 1551113094,
+        temperature: 60,
       }
     };
 
@@ -74,7 +76,7 @@ describe('Darsky Controller', () => {
     };
 
     darsky.getDataCity(city).then((response) => {
-      expect(response).to.be.an('object').that.to.have.keys('latitude', 'longitude', 'time', 'name');
+      expect(response).to.be.an('object').that.to.have.keys('latitude', 'longitude', 'time', 'name', 'temperature', 'timezone');
       done();
     });
   });
@@ -83,8 +85,10 @@ describe('Darsky Controller', () => {
     const obj =  {
       latitude: -33.435974,
       longitude: -70.67286,
+      timezone: 'America/Santiago',
       currently: {
-        time: 1551113092,
+        time: 1551113094,
+        temperature: 60,
       }
     };
 
@@ -93,7 +97,7 @@ describe('Darsky Controller', () => {
       .reply(200, obj);
 
     darsky.getTimeCities().then((response) => {
-      expect(response).to.be.a('array').that.to.have.all.keys('latitude', 'longitude', 'time', 'name');
+      expect(response).to.be.a('array').that.to.have.all.keys('latitude', 'longitude', 'time', 'name', 'temperature', 'timezone');
       done()
     });
   });

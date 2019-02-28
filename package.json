@@ -17,14 +17,15 @@
   },
   "scripts": {
     "start": "node index.js",
-    "start:dev": "nodemon index.js",
     "start:test": "NODE_ENV=testing nodemon index.js",
+    "start:dev": "NODE_ENV=development nodemon index.js",
     "test": "NODE_ENV=testing mocha ./src/**/*.test.js --timeout 10000 ",
     "test:watch": "NODE_ENV=testing mocha ./src/**/*.test.js --watch"
   },
   "dependencies": {
     "axios": "^0.18.0",
     "moment": "^2.24.0",
+    "moment-timezone": "^0.5.23",
     "redis": "^2.8.0",
     "socket.io": "^2.2.0"
   }
