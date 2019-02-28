@@ -44,7 +44,7 @@ async function init() {
     }).catch((err) => console.warn(err.message));
   }
 
-  console.warn('Servidor Escuchando');
+  console.warn('Iniciando Servidor...');
   websocketController.start(cbSocketP);
 }
 

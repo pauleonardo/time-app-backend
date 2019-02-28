@@ -1,6 +1,14 @@
-const io = require('socket.io');
+const app = require('express')();
+
+const http = require('http').Server(app);
+const io = require('socket.io')(http);
+
+http.listen(3001, '0.0.0.0', () => {
+  console.warn('Servidor escuchando!');
+})
 
 let server;
+
 
 /**
  * Inicializa el servidor.
@@ -9,12 +17,12 @@ let server;
 function init(){
   return new Promise((resolve, reject) => {
     try{
-      server = io().listen(3001);
+      server = io;
       resolve(server);
     }catch (e) {
-      reject(new Error('Error init server Websocket'));
+      reject(new Error('Error init server Websocket', e.message));
     }
-  });
+  }).catch((err) => console.warn(e));
 }
 
 /**
