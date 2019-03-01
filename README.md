@@ -1,8 +1,9 @@
-#Time app Backend
+
+# Time app Backend
 
 Esta aplicación es la encarga de hacer las solicitudes a los servicios de Darksky, donde se recuperan datos sobre las ciudad. Entre esos datos: la hora, temperatura, latitud y longitud. Para luego guardalos en el Redis.
 
-###Prerequisitos:
+### Prerequisitos:
 
 Tener instalado previamente Redis, y exponerlo en el puerto 6379.
 
