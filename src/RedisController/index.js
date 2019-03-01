@@ -14,11 +14,9 @@ let clientRedis;
 function init() {
   const REDISPORT = env.REDISPORT;
   const REDISHOST = env.REDISHOST;
+  const REDIS_URL = env.REDIS_URL;
   return new Promise((resolve, reject) => {
-    clientRedis = redis.createClient({
-      host: REDISHOST,
-      port: REDISPORT
-    });
+    clientRedis = redis.createClient(REDIS_URL);
     clientRedis.on("connect", function() {
       resolve("OK");
     });

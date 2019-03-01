@@ -25,6 +25,7 @@
   "dependencies": {
     "axios": "^0.18.0",
     "express": "^4.16.4",
+    "heroku": "^7.22.2",
     "moment": "^2.24.0",
     "moment-timezone": "^0.5.23",
     "redis": "^2.8.0",
