@@ -21,8 +21,6 @@ Para levantarla con Docker:
 
     docker build -t time-app-backend .
 
-    docker run -d -p.
-
     docker run -d -p=3001:3001 --name container-time-app-backend time-app-backend
 
 La aplicación se expone en el puerto 3001.
