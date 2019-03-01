@@ -1,0 +1,34 @@
+{
+  "name": "desafio-acid-labs-backend",
+  "version": "1.0.0",
+  "main": "index.js",
+  "author": "pauleonardo12@gmail.com",
+  "license": "MIT",
+  "devDependencies": {
+    "chai": "^4.2.0",
+    "chai-as-promised": "^7.1.1",
+    "chai-things": "^0.2.0",
+    "mocha": "^6.0.1",
+    "nock": "^10.0.6",
+    "nodemon": "^1.18.10",
+    "redis-mock": "^0.43.0",
+    "sinon": "^7.2.4",
+    "socket.io-client": "^2.2.0"
+  },
+  "scripts": {
+    "start": "node index.js",
+    "start:test": "NODE_ENV=testing nodemon index.js",
+    "start:dev": "NODE_ENV=development nodemon index.js",
+    "test": "NODE_ENV=testing mocha ./src/**/*.test.js --timeout 10000 ",
+    "test:watch": "NODE_ENV=testing mocha ./src/**/*.test.js --watch"
+  },
+  "dependencies": {
+    "axios": "^0.18.0",
+    "express": "^4.16.4",
+    "heroku": "^7.22.2",
+    "moment": "^2.24.0",
+    "moment-timezone": "^0.5.23",
+    "redis": "^2.8.0",
+    "socket.io": "^2.2.0"
+  }
+}
