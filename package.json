@@ -23,7 +23,7 @@
     "test:watch": "NODE_ENV=testing mocha ./src/**/*.test.js --watch"
   },
   "dependencies": {
-    "axios": "^0.18.0",
+    "axios": "^0.21.1",
     "express": "^4.16.4",
     "heroku": "^7.22.2",
     "moment": "^2.24.0",
